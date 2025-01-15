@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Makan Padang</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+        }
+        .total {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rumah Makan Padang</h1>
+
+    <h2>Daftar Menu</h2>
+    <table id="menu-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nama Menu</th>
+                <th>Harga (Rp)</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody id="menu-list">
+            <!-- Menu akan di-generate oleh JavaScript -->
+        </tbody>
+    </table>
+
+    <h2>Pesanan</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama Menu</th>
+                <th>Harga (Rp)</th>
+            </tr>
+        </thead>
+        <tbody id="order-list">
+            <!-- Pesanan akan ditampilkan di sini -->
+        </tbody>
+    </table>
+    <p class="total">Total Harga: Rp <span id="total-price">0</span></p>
+
+    <h2>Kelola Menu</h2>
+    <form id="menu-form">
+        <input type="hidden" id="edit-index" value="">
+        <input type="text" id="menu-name" placeholder="Nama Menu" required>
+        <input type="number" id="menu-price" placeholder="Harga" required>
+        <button type="submit">Simpan</button>
+    </form>
+
+    <script>
+        const menus = [
+            { name: 'Rendang', price: 25000 },
+            { name: 'Ayam Pop', price: 20000 },
+            { name: 'Gulai Ikan', price: 22000 },
+            { name: 'Sate Padang', price: 18000 },
+            { name: 'Dendeng Balado', price: 28000 },
+            { name: 'Perkedel', price: 10000 },
+            { name: 'Soto Padang', price: 24000 },
+            { name: 'Sayur Nangka', price: 15000 },
+            { name: 'Ikan Asam Padeh', price: 26000 },
+            { name: 'Telur Balado', price: 12000 },
+            { name: 'Udang Balado', price: 30000 },
+            { name: 'Gulai Tunjang', price: 27000 },
+            { name: 'Kikil', price: 20000 },
+            { name: 'Cincang', price: 25000 },
+            { name: 'Kerupuk Jangek', price: 7000 },
+            { name: 'Es Teh Manis', price: 5000 },
+            { name: 'Teh Talua', price: 10000 },
+            { name: 'Es Cendol', price: 12000 },
+            { name: 'Es Campur', price: 15000 },
+            { name: 'Air Mineral', price: 4000 },
+            { name: 'Gulai Daun Singkong', price: 15000 },
+            { name: 'Ayam Goreng', price: 22000 },
+            { name: 'Gulai Otak', price: 24000 },
+            { name: 'Pergedel Jagung', price: 10000 },
+            { name: 'Keripik Balado', price: 8000 },
+            { name: 'Tahu Goreng', price: 7000 },
+            { name: 'Gulai Kepala Ikan', price: 35000 },
+            { name: 'Pisang Goreng', price: 10000 },
+            { name: 'Sambal Lado', price: 5000 },
+            { name: 'Kopi Hitam', price: 8000 }
+        ];
+
+        let orders = [];
+
+        function renderMenus() {
+            const menuList = document.getElementById('menu-list');
+            menuList.innerHTML = '';
+            menus.forEach((menu, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${menu.name}</td>
+                    <td>${menu.price}</td>
+                    <td>
+                        <button onclick="addToOrder(${index})">Pesan</button>
+                        <button onclick="editMenu(${index})">Edit</button>
+                        <button onclick="deleteMenu(${index})">Hapus</button>
+                    </td>
+                `;
+                menuList.appendChild(row);
+            });
+        }
+
+        function renderOrders() {
+            const orderList = document.getElementById('order-list');
+            const totalPriceEl = document.getElementById('total-price');
+            orderList.innerHTML = '';
+            let total = 0;
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.name}</td>
+                    <td>${order.price}</td>
+                `;
+                total += order.price;
+                orderList.appendChild(row);
+            });
+            totalPriceEl.textContent = total;
+        }
+
+        function addToOrder(index) {
+            orders.push(menus[index]);
+            renderOrders();
+        }
+
+        function deleteMenu(index) {
+            menus.splice(index, 1);
+            renderMenus();
+        }
+
+        function editMenu(index) {
+            const menu = menus[index];
+            document.getElementById('menu-name').value = menu.name;
+            document.getElementById('menu-price').value = menu.price;
+            document.getElementById('edit-index').value = index;
+        }
+
+        document.getElementById('menu-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('menu-name').value;
+            const price = parseInt(document.getElementById('menu-price').value);
+            const index = document.getElementById('edit-index').value;
+
+            if (index) {
+                menus[index] = { name, price };
+            } else {
+                menus.push({ name, price });
+            }
+
+            document.getElementById('menu-form').reset();
+            document.getElementById('edit-index').value = '';
+            renderMenus();
+        });
+
+        renderMenus();
+        renderOrders();
+    </script>
+</body>
+</html>
