@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rumah Makan Padang</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            background-color: #d62828;
+            color: white;
+            overflow: hidden;
+        }
+        header img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            opacity: 0.8;
+        }
+        header .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(214, 40, 40, 0.5);
+            z-index: 2;
+        }
+        header h1, header p {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 3em;
+            margin-top: 20%;
+        }
+        header p {
+            font-size: 1.5em;
+        }
+        main {
+            padding: 20px;
+        }
+        .menu-container {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .menu-item {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            background-color: white;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .menu-item:hover {
+            transform: scale(1.05);
+        }
+        .menu-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .menu-item h3 {
+            margin: 10px 0;
+        }
+        .menu-item p {
+            margin: 5px 0;
+        }
+        .menu-item button {
+            padding: 10px 15px;
+            background-color: #d62828;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .menu-item button:hover {
+            background-color: #a32020;
+        }
+        .toggle-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #d62828;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            text-align: center;
+        }
+        .toggle-button:hover {
+            background-color: #a32020;
+        }
+        .order-summary {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .order-summary h2 {
+            margin-bottom: 10px;
+        }
+        .order-summary ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .order-summary ul li {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .order-summary .total {
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .order-summary button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        .order-summary button:hover {
+            background-color: #21867a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="images/rumah makan padang.jpg" alt="Background Rendang">
+        <div class="overlay"></div>
+        <h1>Rumah Makan Padang</h1>
+        <p>Selamat datang di Rumah Makan Padang kami! Nikmati hidangan khas dengan cita rasa otentik.</p>
+    </header>
+    <main>
+        <button class="toggle-button" onclick="toggleMenu()">Tampilkan Menu</button>
+        <div class="menu-container" id="menu-container">
+            <!-- Menu akan di-generate oleh JavaScript -->
+        </div>
+        <div class="order-summary" id="order-summary" style="display: none;">
+            <h2>Pesanan Anda</h2>
+            <ul id="order-list"></ul>
+            <p class="total">Total Harga: Rp <span id="total-price">0</span></p>
+            <button onclick="submitOrder()">Pesan Sekarang</button>
+        </div>
+    </main>
+    <script>
+        const menus = [
+            { name: 'Rendang', price: 25000, image: 'images/rendang.jpg' },
+            { name: 'Ayam Pop', price: 20000, image: 'images/ayam_pop.jpg' },
+            { name: 'Gulai Ikan', price: 22000, image: 'images/gulai_ikan.jpg' },
+            { name: 'Sate Padang', price: 18000, image: 'images/sate_padang.jpg' },
+            { name: 'Dendeng Balado', price: 28000, image: 'images/dendeng_balado.jpg' },
+            { name: 'Perkedel', price: 10000, image: 'images/perkedel.jpg' },
+            { name: 'Soto Padang', price: 24000, image: 'images/soto_padang.jpg' },
+            { name: 'Sayur Nangka', price: 15000, image: 'images/sayur_nangka.jpg' },
+            { name: 'Ikan Asam Padeh', price: 26000, image: 'images/asam_padeh.jpg' },
+            { name: 'Telur Balado', price: 12000, image: 'images/telur_balado.jpg' },
+            { name: 'Udang Balado', price: 30000, image: 'images/udang_balado.jpg' },
+            { name: 'Gulai Tunjang', price: 27000, image: 'images/gulai_tunjang.jpg' },
+            { name: 'Kikil', price: 20000, image: 'images/kikil.jpg' },
+            { name: 'Cincang', price: 25000, image: 'images/cincang.jpg' },
+            { name: 'Kerupuk Jangek', price: 7000, image: 'images/kerupuk_jangek.jpg' },
+            { name: 'Es Teh Manis', price: 5000, image: 'images/es_teh_manis.jpg' },
+            { name: 'Teh Talua', price: 10000, image: 'images/teh_talua.jpg' },
+            { name: 'Es Cendol', price: 12000, image: 'images/es_cendol.jpg' },
+            { name: 'Es Campur', price: 15000, image: 'images/es_campur.jpg' },
+            { name: 'Air Mineral', price: 4000, image: 'images/air_mineral.jpg' },
+            { name: 'Gulai Otak', price: 27000, image: 'images/gulai_otak.jpg' },
+            { name: 'Dendeng Batokok', price: 28000, image: 'images/dendeng_batokok.jpg' },
+            { name: 'Ayam Goreng', price: 22000, image: 'images/ayam_goreng.jpg' },
+            { name: 'Pergedel Jagung', price: 10000, image: 'images/pergedel_jagung.jpg' },
+            { name: 'Keripik Balado', price: 8000, image: 'images/keripik_balado.jpg' },
+            { name: 'Tahu Goreng', price: 7000, image: 'images/tahu_goreng.jpg' },
+            { name: 'Pisang Goreng', price: 10000, image: 'images/pisang_goreng.jpg' },
+            { name: 'Gulai Kepala Ikan', price: 35000, image: 'images/gulai_kepala_ikan.jpg' },
+            { name: 'Sambal Lado', price: 5000, image: 'images/sambal_lado.jpg' }
+        ];
+
+        const orders = [];
+
+        function renderMenus() {
+            const menuContainer = document.getElementById('menu-container');
+            menuContainer.innerHTML = '';
+            menus.forEach((menu, index) => {
+                const menuItem = document.createElement('div');
+                menuItem.classList.add('menu-item');
+                menuItem.innerHTML = `
+                    <img src="${menu.image}" alt="${menu.name}">
+                    <h3>${menu.name}</h3>
+                    <p>Harga: Rp ${menu.price}</p>
+                    <button onclick="addToOrder(${index})">Pesan</button>
+                `;
+                menuContainer.appendChild(menuItem);
+            });
+        }
+
+        function addToOrder(index) {
+            const menu = menus[index];
+            orders.push(menu);
+            renderOrderSummary();
+        }
+
+        function renderOrderSummary() {
+            const orderSummary = document.getElementById('order-summary');
+            const orderList = document.getElementById('order-list');
+            const totalPriceEl = document.getElementById('total-price');
+
+            orderSummary.style.display = 'block';
+            orderList.innerHTML = '';
+
+            let totalPrice = 0;
+            orders.forEach(order => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<span>${order.name}</span><span>Rp ${order.price}</span>`;
+                orderList.appendChild(listItem);
+                totalPrice += order.price;
+            });
+
+            totalPriceEl.textContent = totalPrice;
+        }
+
+        function toggleMenu() {
+            const menuContainer = document.getElementById('menu-container');
+            if (menuContainer.style.display === 'grid') {
+                menuContainer.style.display = 'none';
+            } else {
+                menuContainer.style.display = 'grid';
+            }
+        }
+
+        function submitOrder() {
+            if (orders.length === 0) {
+                alert('Anda belum memesan apapun.');
+                return;
+            }
+            alert(`Pesanan Anda telah dikirim! Total: Rp ${orders.reduce((total, item) => total + item.price, 0)}`);
+            orders.length = 0;
+            renderOrderSummary();
+        }
+
+        renderMenus();
+    </script>
+</body>
+</html>
